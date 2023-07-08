@@ -1,0 +1,6 @@
+[NFS_Server]
+Server1
+
+[NFS_Client]
+Server2
+Server3

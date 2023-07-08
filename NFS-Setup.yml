@@ -1,0 +1,42 @@
+---
+ - hosts: all
+   tasks:
+          - yum:
+              name: nfs-utils
+              state: present
+
+          - service:
+              name: nfs-server
+              state: started
+              enabled: yes
+
+ - hosts: NFS_Server
+   vars_files:
+          - variables.yml
+   tasks:
+          - file:
+                path: /data
+                state: directory
+
+          - template:
+                src: exports.j2
+                dest: /etc/exports
+
+          - service:
+                name: nfs-server
+                state: restarted
+                enabled: yes
+
+ - hosts: NFS_Client
+   vars_files:
+          - variables.yml
+   tasks:
+          - file:
+                path: /mydata
+                state: directory
+
+          - mount:
+                src: "{{ server_ip }}:/data"
+                path: /mydata
+                state: mounted
+                fstype: nfs
